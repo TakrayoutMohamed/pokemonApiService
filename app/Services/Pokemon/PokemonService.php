@@ -1,17 +1,32 @@
 <?php
-namespace App\DealingApi;
+namespace App\Services\Pokemon;
 
+use GuzzleHttp\Client;
 use Illuminate\Support\Str;
-use App\Services\Pokemon\ConnectToApi;
+use App\Services\Pokemon\IPokemonService;
 use Illuminate\Support\Facades\Storage;
 use App\DTO\PokemonDTOs\PokemonIndexDTO;
-use App\DealingApi\FetchDataApiInterface;
 use App\DTO\PokemonDTOs\PokemonDetailDTO;
 use App\DTO\PokemonDTOs\PokemonFindedDTO;
 use App\DTO\PokemonDTOs\PokemonSearchDTO;
 
-class PokemonApi extends ConnectToApi implements FetchDataApiInterface 
+class PokemonService implements IPokemonService 
 {
+    protected $client;
+    protected const url="https://pokeapi.co/api/v2/pokemon/";
+    
+    public function __construct()
+    {
+        $client = new Client();
+        $this->client=$client;
+    }
+    //connect to the api te get data than returns thier object
+    public function connect_to_api(string $pokemonName=""):object
+    {
+        $data = $this->client->get(Self::url.$pokemonName);
+        $detaildata=json_decode((string) $data->getBody());
+        return $detaildata;
+    }
     //get all pokemons name
     public function get_all():PokemonIndexDTO
     {
@@ -51,7 +66,7 @@ class PokemonApi extends ConnectToApi implements FetchDataApiInterface
             pokemonExist:$pokemonExist
         );
     }
-    //store image of pokemons to the public path than use it in the get_all method 
+    //store image of pokemons to the public path than use it in the get_all() method above
     public function uploadPokemonImages():void
     {
         $pokemons = $this->connect_to_api()->results;

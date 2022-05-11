@@ -1,26 +1,26 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\DealingApi\FetchDataApiInterface;
+use App\Services\Pokemon\IPokemonService;
 use App\Http\Requests\SearchPokemonRequest;
 
 class PokemonController extends Controller
 {
-    public function index(FetchDataApiInterface $fetchDataApiInterface)
+    public function index(IPokemonService $iPokemonService)
     {
-        $pokemons = $fetchDataApiInterface->get_all();
+        $pokemons = $iPokemonService->get_all();
         return view('pokemon.index',compact('pokemons'));
     }
 
-    public function detail($pokemonName, FetchDataApiInterface $fetchDataApiInterface)
+    public function detail($pokemonName, IPokemonService $iPokemonService)
     {
-        $detailPokemon = $fetchDataApiInterface->get_one($pokemonName);
+        $detailPokemon = $iPokemonService->get_one($pokemonName);
         return view('pokemon.detail',compact('detailPokemon'));
     }
 
-    public function search(SearchPokemonRequest $request,FetchDataApiInterface $fetchDataApiInterface)
+    public function search(SearchPokemonRequest $request,IPokemonService $iPokemonService)
     {
-        $pokemons = $fetchDataApiInterface->search($request->to_pokemon_searchDTO());
+        $pokemons = $iPokemonService->search($request->to_pokemon_searchDTO());
         $pokemonExist=$pokemons->pokemonExist ? '' : 'no record data with name "'.$request->to_pokemon_searchDTO()->search.'"';
         $pokemons->results=$pokemons->pokemonsfinded;
         return view('pokemon.index',compact('pokemons','pokemonExist'));

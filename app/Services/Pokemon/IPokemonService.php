@@ -1,9 +1,9 @@
 <?php
-namespace App\DealingApi;
+namespace App\Services\Pokemon;
 
 use App\DTO\PokemonDTOs\PokemonSearchDTO;
 
-interface FetchDataApiInterface
+interface IPokemonService
 {
     // public function connect_to_api(string $pokemonName=""):object;
     public function get_all();
